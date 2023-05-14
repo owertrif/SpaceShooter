@@ -1,0 +1,14 @@
+# ninja log v5
+8	7765	7057886694915923	CMakeFiles/ClionTest.dir/main.cpp.obj	800467fd839434e4
+7	7252	7057887128239373	CMakeFiles/ClionTest.dir/src/Game.cpp.obj	6e9baa091a28f26
+7253	7675	7057887132474949	ClionTest.exe	8f09e9c096a53c00
+1	625	7057081792021372	build.ninja	347be9f112234d22
+6	1333	7003326920886043	CMakeFiles/ClionTest.dir/Game.cpp.obj	62d2fc3b66c52fc1
+4	2851	7057813056347317	CMakeFiles/ClionTest.dir/src/Player.cpp.obj	53fff2b2c7332004
+4	1241	7004247221975318	CMakeFiles/ClionTest.dir/src/Bomb.cpp.obj	98df79f3254edf76
+27	7189	7006786524934792	CMakeFiles/ClionTest.dir/src/Meteor.cpp.obj	b715b3b56f7d9b76
+4	1344	7057835419650524	CMakeFiles/ClionTest.dir/src/Button.cpp.obj	3c919b1cc6c3b69a
+11	8741	7057887418599724	CMakeFiles/ClionTest.dir/src/Game.cpp.obj	6e9baa091a28f26
+8743	9229	7057887423422734	ClionTest.exe	8f09e9c096a53c00
+8	6830	7057887781941893	CMakeFiles/ClionTest.dir/src/Game.cpp.obj	6e9baa091a28f26
+6831	7246	7057887786078977	ClionTest.exe	8f09e9c096a53c00
