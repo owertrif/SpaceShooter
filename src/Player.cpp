@@ -6,8 +6,8 @@
 
 //Constructor/Destructor
 Player::Player(float x, float y) {
-    this->initVariables();
     this->initSprite();
+    this->initVariables();
     this->setPos(x,y);
 }
 
@@ -62,10 +62,12 @@ void Player::shootBomb() {
 
 void Player::damaging(int damage) {
     this->Hp -= damage;
+    if(this->Hp < 0) this->Hp =0;
 }
 
 void Player::heal(int heal) {
    this->Hp+=heal;
+    if(this->Hp > this->maxHp) this->Hp = this->maxHp;
 }
 
 //Update
@@ -122,14 +124,10 @@ void Player::updateWindowBounds(sf::RenderTarget* target) {
 }
 
 void Player::updateCondition() {
-    if(this->Hp <= 0 )
+    if(this->Hp == 0 )
     {
-        this->Hp = 0;
         this->isDead = true;
-        std::cout<<"is dead !\n";
     }
-    else if(this->Hp > this->maxHp)
-        this->Hp = this->maxHp;
 }
 
 //Render
@@ -180,6 +178,12 @@ const Bomb &Player::getBomb(int i) {
 const std::vector<Bomb> &Player::getMagazine() {
     return this->magazine;
 }
+
+void Player::setCondition(bool condition) {
+    this->isDead = condition;
+}
+
+
 
 
 

@@ -46,6 +46,7 @@ public:
     const sf::Sprite& getSprite() const;
     void setPos(float x, float y);
     void setHp(int Hp);
+    void setCondition(bool condition);
     void deleteBomb(int i);
     const unsigned& getHp()const;
     const unsigned& getMaxHp()const;

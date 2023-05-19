@@ -15,8 +15,9 @@
 
 #include <vector>
 #include <sstream>
+#include <fstream>
 
-enum Scenes{MAIN_MENU,LEVEL_1,PAUSE_MENU,NUMBEROFENUM};
+enum Scenes{MAIN_MENU,LEVEL_1,PAUSE_MENU,END_GAME_MENU,NUMBEROFENUM};
 
 class Game {
 private:
@@ -36,6 +37,8 @@ private:
     sf::Vector2f mousePos;
     sf::Texture buttonTextures;
     float backGrndAnimationFrame;
+    sf::Vector2f startPlayerPos;
+    std::fstream HighScore;
 
     //Objects
     Player player;
@@ -43,6 +46,8 @@ private:
     sf::RectangleShape star;
     std::vector<sf::RectangleShape> stars;
     std::vector<Button*> mainMenuButtons;
+    std::vector<Button*> pauseMenuButtons;
+    std::vector<Button*> endGameMenuButtons;
     sf::Texture mainMenuBackGrndTexture;
     sf::Sprite mainMenuBakcGrndSprite;
 
@@ -64,6 +69,7 @@ private:
     void initUiText(sf::RenderTarget* target);
     void initButtons();
     void initBackGrnd();
+    void initFiles();
 public:
     //Creator/Destructor
     Game();
@@ -75,6 +81,7 @@ public:
     void spawnMeteors(sf::RenderTarget* target);
     void moveMeteores();
     void destroyMeteores();
+    void resetLevelOne();
 
     //update
     void update();

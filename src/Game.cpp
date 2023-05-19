@@ -14,6 +14,7 @@ Game::Game() {
     this->initUi(this->window);
     this->initButtons();
     this->initBackGrnd();
+    this->initFiles();
 }
 
 Game::~Game() {
@@ -55,6 +56,7 @@ void Game::setPlayerPosition() {
     this->player.setPos(this->window->getSize().x/2 - this->player.getSprite().getGlobalBounds().width/2,
                         this->window->getSize().y - this->player.getSprite().getGlobalBounds().height - 10.f
     );
+    this->startPlayerPos = this->player.getSprite().getPosition();
 }
 
 void Game::initUi(sf::RenderTarget* target) {
@@ -88,13 +90,38 @@ void Game::initFont() {
 
 void Game::initButtons() {
     this->buttonTextures.loadFromFile("./textures/Buttons.png");
-    for(int i = 0; i < 2; i++)
+    for(int i = 0; i < 4; i++)
     {
-        Button* button = new Button(sf::Vector2f(48.f,0.f + i*16.f), this->buttonTextures);
+        //TODO FIX IT
+        Button *button = new Button(sf::Vector2f(48.f, 0.f + i * 16.f), this->buttonTextures);
         button->setScale(4);
-        button->setPosition(sf::Vector2f(this->window->getSize().x/2.f - button->getSprite().getGlobalBounds().width/2.f,
-                                        this->window->getSize().y/2.f - button->getSprite().getGlobalBounds().height*2.f + i*(button->getSprite().getGlobalBounds().height + 16.f)));
-        mainMenuButtons.push_back(button);
+        if(i < 2) {
+            button->setPosition(
+                    sf::Vector2f(this->window->getSize().x / 2.f - button->getSprite().getGlobalBounds().width / 2.f,
+                                 this->window->getSize().y / 2.f - button->getSprite().getGlobalBounds().height * 2.f +
+                                 i * (button->getSprite().getGlobalBounds().height + 16.f)));
+            mainMenuButtons.push_back(button);
+        }
+        else if(i == 2)
+        {
+            button->setPosition(sf::Vector2f(this->window->getSize().x / 2.f - button->getSprite().getGlobalBounds().width / 2.f,
+                                 this->window->getSize().y / 2.f - button->getSprite().getGlobalBounds().height * 2.f));
+            this->pauseMenuButtons.push_back(button);
+            this->pauseMenuButtons.push_back(this->mainMenuButtons[1]);
+            this->pauseMenuButtons[1]->setPosition(sf::Vector2f(this->window->getSize().x / 2.f - button->getSprite().getGlobalBounds().width / 2.f,
+                                                                this->window->getSize().y / 2.f - button->getSprite().getGlobalBounds().height * 2.f +
+                                                                (button->getSprite().getGlobalBounds().height + 16.f)));
+        }
+        else if(i == 3)
+        {
+            button->setPosition(sf::Vector2f(this->window->getSize().x / 2.f - button->getSprite().getGlobalBounds().width / 2.f,
+                                             this->window->getSize().y / 2.f - button->getSprite().getGlobalBounds().height * 2.f));
+            this->endGameMenuButtons.push_back(button);
+            this->endGameMenuButtons.push_back(this->mainMenuButtons[1]);
+            this->endGameMenuButtons[1]->setPosition(sf::Vector2f(this->window->getSize().x / 2.f - button->getSprite().getGlobalBounds().width / 2.f,
+                                                                this->window->getSize().y / 2.f - button->getSprite().getGlobalBounds().height * 2.f +
+                                                                (button->getSprite().getGlobalBounds().height + 16.f)));
+        }
     }
 }
 
@@ -102,6 +129,11 @@ void Game::initBackGrnd() {
     this->mainMenuBackGrndTexture.loadFromFile("./textures/animated_back/flipBook.png");
     this->mainMenuBakcGrndSprite.setTexture(this->mainMenuBackGrndTexture);
     this->mainMenuBakcGrndSprite.setTextureRect(sf::IntRect(0,0,960,640));
+}
+
+void Game::initFiles() {
+    this->HighScore.open("./data/HighScore.txt");
+    if(!this->HighScore.is_open())std::cout<<"Error opening file \n";
 }
 
 //Public functions
@@ -116,6 +148,10 @@ void Game::poolEvent() {
                 break;
             case sf::Event::KeyPressed:
                 if (this->ev.key.code == sf::Keyboard::Escape)
+                    if(this->CurrScene == LEVEL_1) this->CurrScene = PAUSE_MENU;
+                else if (this->ev.key.code == sf::Keyboard::Escape)
+                    if(this->CurrScene == PAUSE_MENU) this->CurrScene = LEVEL_1;
+                else
                     this->window->close();
                 break;
             case sf::Event::MouseButtonReleased:
@@ -126,7 +162,7 @@ void Game::poolEvent() {
 }
 
 bool Game::running() {
-    return this->window->isOpen() && !this->player.getCondition();
+    return this->window->isOpen();
 }
 
 //Render
@@ -146,6 +182,26 @@ void Game::render() {
             this->renderMeteors(this->window);
             this->player.render(this->window);
             this->renderUi(this->window);
+            break;
+        case PAUSE_MENU:
+            this->renderStars(this->window);
+            this->renderMeteors(this->window);
+            this->player.render(this->window);
+            this->renderUi(this->window);
+            for(int i = 0; i < this->pauseMenuButtons.size();i++)
+            {
+                this->pauseMenuButtons[i]->render(this->window);
+            }
+            break;
+        case END_GAME_MENU:
+            this->renderStars(this->window);
+            this->renderMeteors(this->window);
+            this->player.render(this->window);
+            this->renderUi(this->window);
+            for(int i = 0; i < this->endGameMenuButtons.size();i++)
+            {
+                this->endGameMenuButtons[i]->render(this->window);
+            }
             break;
     }
 
@@ -181,6 +237,9 @@ void Game::update() {
             break;
         case LEVEL_1:
 
+            if(this->player.getCondition())
+                this->CurrScene = END_GAME_MENU;
+
             this->player.update(this->window);
             this->updateStars();
             this->updateMeteores(this->window);
@@ -188,6 +247,12 @@ void Game::update() {
             this->updateHpBar(this->window);
             this->updatePoints();
 
+            break;
+        case PAUSE_MENU:
+            this->updateButtons();
+            break;
+        case END_GAME_MENU:
+            this->updateButtons();
             break;
     }
 
@@ -239,11 +304,8 @@ void Game::spawnMeteors(sf::RenderTarget *target) {
                     this->meteors.erase(this->meteors.begin() + i);
                     this->numberOfMeteors--;
                 }
-                if (meteor.getShape().getGlobalBounds().intersects(this->meteors[i].getShape().getGlobalBounds())) {
-                    this->meteors.erase(this->meteors.begin() + i);
-                    this->numberOfMeteors--;
-                }
             }
+
             this->meteors.push_back(meteor);
         }
     }
@@ -284,6 +346,7 @@ void Game::updateCollisionForMeteores(sf::RenderTarget *target) {
     for(int i = 0; i<this->meteors.size();i++)
     {
         if(this->player.getSprite().getGlobalBounds().intersects(this->meteors[i].getShape().getGlobalBounds())) {
+            if(this->meteors[i].getDamage() > this->player.getHp()) this->meteors[i].setDamage(this->player.getHp());
             this->player.damaging(this->meteors[i].getDamage());
             this->meteors.erase(this->meteors.begin()+i);
             this->numberOfMeteors--;
@@ -327,23 +390,54 @@ void Game::updateMousePos() {
 }
 
 void Game::updateButtons() {
-
-    for(auto button : this->mainMenuButtons)
+    if(this->CurrScene == MAIN_MENU) {
+        for (auto button: this->mainMenuButtons) {
+            this->updateMousePos();
+            if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left + 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                       !sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left - 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else {
+                button->setSpriteRect(sf::Vector2f(button->getRect().left, button->getRect().top));
+            }
+        }
+    }
+    else if(this->CurrScene == PAUSE_MENU)
     {
-        this->updateMousePos();
-        if(button->getSprite().getGlobalBounds().contains(mousePos.x,mousePos.y) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left + 48.f,
-                                               button->getSprite().getTextureRect().top));
+        for (auto button: this->pauseMenuButtons) {
+            this->updateMousePos();
+            if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left + 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                       !sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left - 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else {
+                button->setSpriteRect(sf::Vector2f(button->getRect().left, button->getRect().top));
+            }
         }
-        else if(button->getSprite().getGlobalBounds().contains(mousePos.x,mousePos.y) && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left - 48.f,
-                                               button->getSprite().getTextureRect().top));
-        }
-        else
-        {
-            button->setSpriteRect(sf::Vector2f (button->getRect().left,button->getRect().top));
+    }
+    else if(this->CurrScene == END_GAME_MENU)
+    {
+        for (auto button: this->endGameMenuButtons) {
+            this->updateMousePos();
+            if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left + 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else if (button->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) &&
+                       !sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                button->setSpriteRect(sf::Vector2f(button->getSprite().getTextureRect().left - 48.f,
+                                                   button->getSprite().getTextureRect().top));
+            } else {
+                button->setSpriteRect(sf::Vector2f(button->getRect().left, button->getRect().top));
+            }
         }
     }
 }
@@ -353,6 +447,26 @@ void Game::updateButtonClick(sf::Event event) {
         for (int i = 0; i < this->mainMenuButtons.size();i++) {
             if (this->mainMenuButtons[i]->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) && event.type == sf::Event::MouseButtonReleased) {
                 if(i == 0) this->CurrScene = LEVEL_1;
+                if(i == 1) this->window->close();
+            }
+        }
+    }
+    else if(this->CurrScene == PAUSE_MENU) {
+        for (int i = 0; i < this->pauseMenuButtons.size();i++) {
+            if (this->pauseMenuButtons[i]->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) && event.type == sf::Event::MouseButtonReleased) {
+                if(i == 0) this->CurrScene = LEVEL_1;
+                if(i == 1) this->window->close();
+            }
+        }
+    }
+    else if(this->CurrScene == END_GAME_MENU) {
+        for (int i = 0; i < this->pauseMenuButtons.size();i++) {
+            if (this->pauseMenuButtons[i]->getSprite().getGlobalBounds().contains(mousePos.x, mousePos.y) && event.type == sf::Event::MouseButtonReleased) {
+                if(i == 0)
+                {
+                    this->CurrScene = MAIN_MENU;
+                    this->resetLevelOne();
+                }
                 if(i == 1) this->window->close();
             }
         }
@@ -368,6 +482,22 @@ void Game::updateBackGrnd() {
                                                                 0,960,640));
     //std::cout<<this->mainMenuBakcGrndSprite.getTextureRect().left<<std::endl;
 }
+
+void Game::resetLevelOne() {
+    this->player.setHp(this->player.getMaxHp());
+    this->player.setCondition(false);
+    this->player.setPos(this->startPlayerPos.x,this->startPlayerPos.y);
+    for(int i = 0; i < this->player.getMagazine().size();i++)
+    {
+        this->player.deleteBomb(i);
+    }
+    this->points = 0;
+    this->meteors.erase(this->meteors.begin(), this->meteors.end());
+    this->numberOfMeteors =0;
+}
+
+
+
 
 
 
