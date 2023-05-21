@@ -40,9 +40,9 @@ void Player::initSprite() {
 
 void Player::shootBomb() {
     //Shoot the projectile
-    if(this->shootFrame >= 0.25) this->shootFrame = 0.25f;
+    if(this->shootFrame >= 0.35) this->shootFrame = 0.35f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            if(this->shootFrame >= 0.25f) {
+            if(this->shootFrame >= 0.35f) {
                 this->shootFrame = 0;
                 Bomb bomb(sf::Vector2f (this->playerSprite.getPosition().x + this->playerSprite.getGlobalBounds().width/2 - 8.f,
                                         this->playerSprite.getPosition().y));

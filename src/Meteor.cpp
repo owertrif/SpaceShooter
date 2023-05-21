@@ -21,12 +21,15 @@ void Meteor::initVariables() {
     this->maxHp = 2;
     this->Hp = this->maxHp;
     this->damage = 1;
-    this->speed = 1.5f;
+    this->speed = (static_cast<float>(rand()%13) + 2.f)/10;
+    this->rotateSpeed = (static_cast<float>(rand()%13) + 2.f)/10;
     this->type = DEFAULT;
     this->points = 1;
 }
 
 void Meteor::initSprite() {
+    this->meteorTexture.loadFromFile("./textures/Entity.png");
+    this->meteorSprite.setTexture(this->meteorTexture);
     int rnd = rand()%101;
 
     if(rnd > 50 && rnd <= 80)
@@ -41,50 +44,39 @@ void Meteor::initSprite() {
     switch(this->type)
     {
         case DEFAULT:
-            this->meteorSprite.setFillColor(sf::Color(122, 122, 122));
-            this->meteorSprite.setRadius(15.f);
-            this->meteorSprite.setOutlineColor(sf::Color(51, 51, 51));
-            this->meteorSprite.setOutlineThickness(5.f);
+            this->meteorSprite.setTextureRect(sf::IntRect(0,0,32,32));
             this->maxHp = 2;
             this->Hp = this->maxHp;
             this->damage = 1;
             this->points = 1;
             break;
         case GIANT:
-            this->meteorSprite.setFillColor(sf::Color(122, 122, 122));
-            this->meteorSprite.setRadius(30.f);
-            this->meteorSprite.setOutlineColor(sf::Color(51, 51, 51));
-            this->meteorSprite.setOutlineThickness(10.f);
+            this->meteorSprite.setTextureRect(sf::IntRect(0,0,32,32));
+            this->meteorSprite.setScale(2,2);
             this->maxHp = 5;
             this->Hp = this->maxHp;
-            this->damage = 3;
+            this->damage = 5;
             this->points = 3;
             break;
         case HEALING:
-            this->meteorSprite.setFillColor(sf::Color(122, 122, 122));
-            this->meteorSprite.setRadius(15.f);
-            this->meteorSprite.setOutlineColor(sf::Color::Green);
-            this->meteorSprite.setOutlineThickness(5.f);
+            this->meteorSprite.setTextureRect(sf::IntRect(32,0,32,32));
             this->maxHp = 4;
             this->Hp = this->maxHp;
-            this->damage = 2;
+            this->damage = 3;
             this->points = 2;
             break;
         case RICH:
-            this->meteorSprite.setFillColor(sf::Color(122, 122, 122));
-            this->meteorSprite.setRadius(15.f);
-            this->meteorSprite.setOutlineColor(sf::Color::Yellow);
-            this->meteorSprite.setOutlineThickness(5.f);
+            this->meteorSprite.setTextureRect(sf::IntRect(64,0,32,32));
             this->maxHp = 5;
             this->Hp = this->maxHp;
-            this->damage = 2;
+            this->damage = 4;
             this->points = 5;
             break;
     }
 }
 
 void Meteor::update() {
-
+    this->rotate();
 }
 
 void Meteor::render(sf::RenderTarget *target) {
@@ -128,11 +120,15 @@ const float Meteor::getSpeed() const {
     return this->speed;
 }
 
-const sf::CircleShape &Meteor::getShape()const {
+const sf::Sprite &Meteor::getShape()const {
     return this->meteorSprite;
 }
 
 const unsigned &Meteor::getPoints() const {
     return this->points;
+}
+
+void Meteor::rotate() {
+    this->meteorSprite.setRotation(this->meteorSprite.getRotation() + this->rotateSpeed);
 }
 

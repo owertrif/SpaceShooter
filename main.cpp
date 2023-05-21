@@ -2,8 +2,8 @@
 #include "Game.h"
 #include <ctime>
 
-int main() {
 
+int main() {
     srand(time(nullptr));
     Game game;
     while(game.running())

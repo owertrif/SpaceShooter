@@ -38,11 +38,12 @@ private:
     sf::Texture buttonTextures;
     float backGrndAnimationFrame;
     sf::Vector2f startPlayerPos;
+    std::string highScore;
     std::fstream HighScore;
 
     //Objects
     Player player;
-    std::vector<Meteor> meteors;
+    std::vector<Meteor*> meteors;
     sf::RectangleShape star;
     std::vector<sf::RectangleShape> stars;
     std::vector<Button*> mainMenuButtons;
@@ -57,6 +58,7 @@ private:
     std::vector<sf::RectangleShape> currentHpBar;
     sf::Font font;
     sf::Text pointsText;
+    sf::Text highScoreText;
 
     //Functions
     void initWindow();
@@ -96,6 +98,7 @@ public:
     void updateButtons();
     void updateButtonClick(sf::Event event);
     void updateBackGrnd();
+    void updateHighScore();
 
     //render
     void render();

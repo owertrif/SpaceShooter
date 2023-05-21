@@ -21,9 +21,11 @@ private:
     float speed;
     unsigned type;
     unsigned points;
+    float rotateSpeed;
 
     //Textures
-    sf::CircleShape meteorSprite;
+    sf::Texture meteorTexture;
+    sf::Sprite meteorSprite;
 
     //Functions
     void initVariables();
@@ -34,7 +36,7 @@ public:
     virtual ~Meteor();
 
     //Accessors
-    const sf::CircleShape& getShape()const;
+    const sf::Sprite& getShape()const;
     void setPosition(float x,float y);
     const float getSpeed()const;
     void setHp(int Hp);
@@ -48,7 +50,7 @@ public:
 
     //update
     void update();
-
+    void rotate();
     //render
 
     void render(sf::RenderTarget* target);

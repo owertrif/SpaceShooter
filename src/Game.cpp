@@ -18,7 +18,10 @@ Game::Game() {
 }
 
 Game::~Game() {
-    this->meteors.clear();
+    for(auto mt : this->meteors)
+    {
+        delete mt;
+    }
     this->stars.clear();
     delete this->window;
     for(int i = 0; i< this->mainMenuButtons.size();i++)
@@ -29,13 +32,13 @@ Game::~Game() {
 
 //Private functions
 void Game::initWindow() {
-    this->videoMode = sf::VideoMode(800.f,600.f);
-    this->window = new sf::RenderWindow(videoMode,"Test",sf::Style::Close|sf::Style::Titlebar);
+    this->videoMode = sf::VideoMode(960.f,640.f);
+    this->window = new sf::RenderWindow(videoMode,"Test");
     this->window->setFramerateLimit(60);
 }
 
 void Game::initVariables() {
-    this->maxMeteors = 30;
+    this->maxMeteors = 55;
     this->numberOfMeteors = 0;
     this->points = 0;
     this->CurrScene = MAIN_MENU;
@@ -82,6 +85,10 @@ void Game::initUiText(sf::RenderTarget* target) {
     this->pointsText.setCharacterSize(24);
     this->pointsText.setPosition(0.f,0.f);
     this->pointsText.setString("NONE");
+    this->highScoreText.setFont(this->font);
+    this->highScoreText.setCharacterSize(24);
+    this->highScoreText.setPosition(0.f,24.f);
+    this->highScoreText.setString("NONE");
 }
 
 void Game::initFont() {
@@ -92,7 +99,7 @@ void Game::initButtons() {
     this->buttonTextures.loadFromFile("./textures/Buttons.png");
     for(int i = 0; i < 4; i++)
     {
-        //TODO FIX IT
+
         Button *button = new Button(sf::Vector2f(48.f, 0.f + i * 16.f), this->buttonTextures);
         button->setScale(4);
         if(i < 2) {
@@ -134,6 +141,7 @@ void Game::initBackGrnd() {
 void Game::initFiles() {
     this->HighScore.open("./data/HighScore.txt");
     if(!this->HighScore.is_open())std::cout<<"Error opening file \n";
+    this->HighScore.close();
 }
 
 //Public functions
@@ -216,11 +224,12 @@ void Game::renderStars(sf::RenderTarget* target) {
 
 void Game::renderMeteors(sf::RenderTarget *target) {
     for(auto mt: this->meteors)
-        target->draw(mt.getShape());
+        target->draw(mt->getShape());
 }
 
 void Game::renderUi(sf::RenderTarget *target) {
     target->draw(this->pointsText);
+    target->draw(this->highScoreText);
     target->draw(this->maxHpBar);
     for(auto hc : currentHpBar)
         target->draw(hc);
@@ -246,6 +255,7 @@ void Game::update() {
             this->updateCollision(this->window);
             this->updateHpBar(this->window);
             this->updatePoints();
+            this->updateHighScore();
 
             break;
         case PAUSE_MENU:
@@ -286,7 +296,7 @@ void Game::updateStars() {
 void Game::moveMeteores() {
     for(auto& mt : this->meteors)
     {
-        mt.setPosition(mt.getShape().getPosition().x,mt.getShape().getPosition().y + mt.getSpeed());
+        mt->setPosition(mt->getShape().getPosition().x,mt->getShape().getPosition().y + mt->getSpeed());
     }
 }
 
@@ -295,12 +305,14 @@ void Game::moveMeteores() {
 void Game::spawnMeteors(sf::RenderTarget *target) {
     if(this->numberOfMeteors < this->maxMeteors)
     {
-        if(this->spawnMeteorFrame >= 0.1) {
+        //TODO fix meteor textures
+        if(this->spawnMeteorFrame >= 0.05) {
             this->spawnMeteorFrame = 0;
             this->numberOfMeteors++;
-            Meteor meteor(target);
+            Meteor* meteor = new Meteor(target);
             for(int i = 0; i < this->meteors.size();i++) {
-                if (this->meteors[i].getShape().getGlobalBounds().intersects(meteor.getShape().getGlobalBounds())) {
+                if (this->meteors[i]->getShape().getGlobalBounds().intersects(meteor->getShape().getGlobalBounds())) {
+                    delete this->meteors[i];
                     this->meteors.erase(this->meteors.begin() + i);
                     this->numberOfMeteors--;
                 }
@@ -317,15 +329,15 @@ void Game::spawnMeteors(sf::RenderTarget *target) {
 
 void Game::destroyMeteores() {
     //Destroy meteores
-    for (int i = 0; i < this->player.getMagazine().size(); ++i) {
-        for(int j = 0; j < this -> meteors.size();j++)
+    for (int i = 0; i < this -> meteors.size(); ++i) {
+        for(int j = 0; j < this->player.getMagazine().size();j++)
         {
-            if(this->meteors[j].getShape().getGlobalBounds().intersects(this->player.getBomb(i).getSprite().getGlobalBounds()))
+            if(this->meteors[i]->getShape().getGlobalBounds().intersects(this->player.getBomb(j).getSprite().getGlobalBounds()))
             {
 
-                this->meteors[j].setHp(this->meteors[j].getHp() - this->player.getBomb(i).getDamage());
+                this->meteors[i]->setHp(this->meteors[i]->getHp() - this->player.getBomb(j).getDamage());
 
-                this->player.deleteBomb(i);
+                this->player.deleteBomb(j);
             }
         }
     }
@@ -335,8 +347,9 @@ void Game::updateCollisionForMeteores(sf::RenderTarget *target) {
     //Respawn meteores that got out of bounds
     for(int i = 0; i<this->meteors.size();i++)
     {
-        if(this->meteors[i].getShape().getGlobalBounds().top + this->meteors[i].getShape().getGlobalBounds().height >= target->getSize().y) {
-            this->meteors.erase(this->meteors.begin()+i);
+        if(this->meteors[i]->getShape().getGlobalBounds().top >= target->getSize().y) {
+            delete this->meteors[i];
+            this->meteors.erase(this->meteors.begin() + i);
             this->numberOfMeteors--;
         }
 
@@ -345,10 +358,11 @@ void Game::updateCollisionForMeteores(sf::RenderTarget *target) {
     //Decrese hero hp when collapsing with meteor
     for(int i = 0; i<this->meteors.size();i++)
     {
-        if(this->player.getSprite().getGlobalBounds().intersects(this->meteors[i].getShape().getGlobalBounds())) {
-            if(this->meteors[i].getDamage() > this->player.getHp()) this->meteors[i].setDamage(this->player.getHp());
-            this->player.damaging(this->meteors[i].getDamage());
-            this->meteors.erase(this->meteors.begin()+i);
+        if(this->player.getSprite().getGlobalBounds().intersects(this->meteors[i]->getShape().getGlobalBounds())) {
+            if(this->meteors[i]->getDamage() > this->player.getHp()) this->meteors[i]->setDamage(this->player.getHp());
+            this->player.damaging(this->meteors[i]->getDamage());
+            delete this->meteors[i];
+            this->meteors.erase(this->meteors.begin() + i);
             this->numberOfMeteors--;
         }
     }
@@ -370,10 +384,12 @@ void Game::updateMeteores(sf::RenderTarget* target) {
 
     for(int i{0}; i<this->meteors.size();i++)
     {
-        if(this->meteors[i].getHp()<=0) {
-            if(meteors[i].getType() == HEALING) this->player.heal(1);
-            this->points+= this->meteors[i].getPoints();
-            this->meteors.erase(this->meteors.begin()+i);
+        this->meteors[i]->update();
+        if(this->meteors[i]->getHp()<=0) {
+            if(meteors[i]->getType() == HEALING) this->player.heal(1);
+            this->points+= this->meteors[i]->getPoints();
+            delete this->meteors[i];
+            this->meteors.erase(this->meteors.begin() + i);
             this->numberOfMeteors--;
         }
     }
@@ -383,6 +399,10 @@ void Game::updatePoints() {
     std::stringstream ss;
     ss<<"Points: "<<this->points<<'\n';
     this->pointsText.setString(ss.str());
+
+    std::stringstream hs;
+    hs<<"High Score: "<<this->highScore<<'\n';
+    this->highScoreText.setString(hs.str());
 }
 
 void Game::updateMousePos() {
@@ -495,6 +515,20 @@ void Game::resetLevelOne() {
     this->meteors.erase(this->meteors.begin(), this->meteors.end());
     this->numberOfMeteors =0;
 }
+
+void Game::updateHighScore() {
+    this->HighScore.open("./data/HighScore.txt");
+    this->highScore.clear();
+    std::getline(this->HighScore,this->highScore);
+    this->HighScore.close();
+    if(std::stoi(this->highScore)< points) {
+        this->HighScore.open("./data/HighScore.txt");
+        this->HighScore << points;
+    }
+    this->HighScore.close();
+}
+
+
 
 
 
