@@ -288,7 +288,7 @@ void Game::updateStars() {
     {
         st.move(0.f,1.f);
         if (st.getGlobalBounds().top + st.getGlobalBounds().height >= this->window->getSize().y)
-            st.setPosition(rand() % this->window->getSize().x, 0.f);
+            st.setPosition(rand() % this->window->getSize().x, -rand() % 50);
     }
 
 }
@@ -500,7 +500,6 @@ void Game::updateBackGrnd() {
     }
     this->mainMenuBakcGrndSprite.setTextureRect(sf::IntRect(0 + 960*static_cast<int>(this->backGrndAnimationFrame*4),
                                                                 0,960,640));
-    //std::cout<<this->mainMenuBakcGrndSprite.getTextureRect().left<<std::endl;
 }
 
 void Game::resetLevelOne() {
@@ -527,6 +526,8 @@ void Game::updateHighScore() {
     }
     this->HighScore.close();
 }
+
+
 
 
 

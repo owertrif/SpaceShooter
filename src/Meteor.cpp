@@ -22,7 +22,7 @@ void Meteor::initVariables() {
     this->Hp = this->maxHp;
     this->damage = 1;
     this->speed = (static_cast<float>(rand()%13) + 2.f)/10;
-    this->rotateSpeed = (static_cast<float>(rand()%13) + 2.f)/10;
+    this->rotateSpeed = (static_cast<float>(rand()%5) + 2.f)/10;
     this->type = DEFAULT;
     this->points = 1;
 }
