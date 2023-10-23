@@ -91,6 +91,13 @@ build CMakeFiles/ClionTest.dir/src/Button.cpp.obj: CXX_COMPILER__ClionTest_Debug
   OBJECT_DIR = CMakeFiles\ClionTest.dir
   OBJECT_FILE_DIR = CMakeFiles\ClionTest.dir\src
 
+build CMakeFiles/ClionTest.dir/src/Pagination.cpp.obj: CXX_COMPILER__ClionTest_Debug E$:/Train/ClionTest/src/Pagination.cpp || cmake_object_order_depends_target_ClionTest
+  DEP_FILE = CMakeFiles\ClionTest.dir\src\Pagination.cpp.obj.d
+  FLAGS = -IE:/libs/clion_libs/SFML/include -LE:/libs/clion_libs/SFML/lib -g -fdiagnostics-color=always -std=gnu++20
+  INCLUDES = -IE:/Train/ClionTest/headers -IE:/Train/ClionTest/src -IE:/Train/ClionTest/textures
+  OBJECT_DIR = CMakeFiles\ClionTest.dir
+  OBJECT_FILE_DIR = CMakeFiles\ClionTest.dir\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target ClionTest
@@ -99,7 +106,7 @@ build CMakeFiles/ClionTest.dir/src/Button.cpp.obj: CXX_COMPILER__ClionTest_Debug
 #############################################
 # Link the executable ClionTest.exe
 
-build ClionTest.exe: CXX_EXECUTABLE_LINKER__ClionTest_Debug CMakeFiles/ClionTest.dir/main.cpp.obj CMakeFiles/ClionTest.dir/src/Game.cpp.obj CMakeFiles/ClionTest.dir/src/Player.cpp.obj CMakeFiles/ClionTest.dir/src/Bomb.cpp.obj CMakeFiles/ClionTest.dir/src/Meteor.cpp.obj CMakeFiles/ClionTest.dir/src/Button.cpp.obj
+build ClionTest.exe: CXX_EXECUTABLE_LINKER__ClionTest_Debug CMakeFiles/ClionTest.dir/main.cpp.obj CMakeFiles/ClionTest.dir/src/Game.cpp.obj CMakeFiles/ClionTest.dir/src/Player.cpp.obj CMakeFiles/ClionTest.dir/src/Bomb.cpp.obj CMakeFiles/ClionTest.dir/src/Meteor.cpp.obj CMakeFiles/ClionTest.dir/src/Button.cpp.obj CMakeFiles/ClionTest.dir/src/Pagination.cpp.obj
   FLAGS = -IE:/libs/clion_libs/SFML/include -LE:/libs/clion_libs/SFML/lib -g
   LINK_LIBRARIES = -lsfml-graphics-d  -lsfml-system-d  -lsfml-window-d  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\ClionTest.dir

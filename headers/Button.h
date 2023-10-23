@@ -10,6 +10,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <iostream>
 
 class Button {
 private:
@@ -21,9 +22,10 @@ private:
     void initSprite();
 public:
     //Constructor/Destructor
-    Button(sf::Vector2f path, sf::Texture texture);
+    Button(sf::IntRect rect, sf::Texture texture);
     virtual ~Button();
 
+    void update(sf::Vector2f mousePos);
 
     //Render
     void render(sf::RenderTarget* target);
@@ -31,7 +33,7 @@ public:
 
     void setSpriteRect(sf::Vector2f textureRect);
     void setPosition(sf::Vector2f pos);
-    void setScale(float scale);
+    void setScale(sf::Vector2f scale);
 
     const sf::Sprite getSprite()const;
     const sf::IntRect getRect()const;

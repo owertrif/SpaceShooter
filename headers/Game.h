@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Meteor.h"
 #include "Button.h"
+#include "Pagination.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -17,7 +18,7 @@
 #include <sstream>
 #include <fstream>
 
-enum Scenes{MAIN_MENU,LEVEL_1,PAUSE_MENU,END_GAME_MENU,NUMBEROFENUM};
+enum Scenes{MAIN_MENU,LEVEL_1,PAUSE_MENU,END_GAME_MENU,OPTIONS,NUMBEROFENUM};
 
 class Game {
 private:
@@ -49,6 +50,8 @@ private:
     std::vector<Button*> mainMenuButtons;
     std::vector<Button*> pauseMenuButtons;
     std::vector<Button*> endGameMenuButtons;
+    std::vector<Button*> optionsMenuButtons;
+    std::vector<Pagination*> optionsMenuPaginations;
     sf::Texture mainMenuBackGrndTexture;
     sf::Sprite mainMenuBakcGrndSprite;
 
@@ -72,6 +75,10 @@ private:
     void initButtons();
     void initBackGrnd();
     void initFiles();
+    void initMainMenuBt();
+    void initPauseMenuBt();
+    void initEndGameMenuBt();
+    void initOptionsMenuBt();
 public:
     //Creator/Destructor
     Game();

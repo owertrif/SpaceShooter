@@ -33,7 +33,7 @@ void Player::initSprite() {
      */
     this->playerTexture.loadFromFile("./textures/playerTileset.png");
     this->playerSprite.setTexture(this->playerTexture);
-    this->playerSprite.setTextureRect(sf::IntRect (0.f,0.f,64.f,64.f));
+    this->playerSprite.setTextureRect(sf::IntRect (0.f,0.f,80.f,64.f));
 }
 
 //Public functions
@@ -101,8 +101,8 @@ void Player::updateTime() {
 
 void Player::updateSprite() {
     if(this->spriteFrame > 1.5) this->spriteFrame = 0;
-    this->playerSprite.setTextureRect(sf::IntRect(0.f + static_cast<unsigned>(this->spriteFrame*2)*64,
-                                                  0.0f,64.f,64.f));
+    this->playerSprite.setTextureRect(sf::IntRect(0.f + static_cast<unsigned>(this->spriteFrame*2)*80,
+                                                  0.0f,80.f,64.f));
 }
 
 void Player::updateWindowBounds(sf::RenderTarget* target) {

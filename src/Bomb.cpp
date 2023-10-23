@@ -23,7 +23,7 @@ void Bomb::initVariables() {
 
 void Bomb::initSprite() {
    this->bombSprite.setFillColor(sf::Color::Red);
-   this->bombSprite.setRadius(8.f);
+   this->bombSprite.setRadius(4.f);
    this->bombSprite.setOutlineColor(sf::Color::Magenta);
    this->bombSprite.setOutlineThickness(2.f);
 }

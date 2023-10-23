@@ -22,7 +22,7 @@ void Meteor::initVariables() {
     this->Hp = this->maxHp;
     this->damage = 1;
     this->speed = (static_cast<float>(rand()%13) + 2.f)/10;
-    this->rotateSpeed = (static_cast<float>(rand()%5) + 2.f)/10;
+    this->rotateSpeed = (static_cast<float>(rand()%10) - 5.f)/10;
     this->type = DEFAULT;
     this->points = 1;
 }
@@ -32,9 +32,9 @@ void Meteor::initSprite() {
     this->meteorSprite.setTexture(this->meteorTexture);
     int rnd = rand()%101;
 
-    if(rnd > 50 && rnd <= 80)
+    if(rnd > 50 && rnd <= 85)
         this->type = GIANT;
-    else if(rnd > 80 && rnd <= 90)
+    else if(rnd > 85 && rnd <= 90)
         this->type = HEALING;
     else if(rnd > 90 && rnd <= 100)
         this->type = RICH;
@@ -55,21 +55,20 @@ void Meteor::initSprite() {
             this->meteorSprite.setScale(2,2);
             this->maxHp = 5;
             this->Hp = this->maxHp;
-            this->damage = 5;
+            this->damage = 4;
             this->points = 3;
             break;
         case HEALING:
             this->meteorSprite.setTextureRect(sf::IntRect(32,0,32,32));
             this->maxHp = 4;
             this->Hp = this->maxHp;
-            this->damage = 3;
             this->points = 2;
             break;
         case RICH:
             this->meteorSprite.setTextureRect(sf::IntRect(64,0,32,32));
             this->maxHp = 5;
             this->Hp = this->maxHp;
-            this->damage = 4;
+            this->damage = 3;
             this->points = 5;
             break;
     }
